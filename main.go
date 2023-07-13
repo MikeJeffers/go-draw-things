@@ -88,8 +88,8 @@ func drawSpawnOnGrid(startX, startY, dir int, grid [][]int, grammar string) []Pa
 			dir -= 1
 		}
 
-		for i := 0; i < 8; i++ {
-			dir = norm(dir, 8)
+		for i := 0; i < len(DIRS); i++ {
+			dir = norm(dir, len(DIRS))
 			offX, offY := getOffset(dir)
 			nextX, nextY := startX+offX, startY+offY
 			if len(grid) <= nextY || nextY < 0 {
