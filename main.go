@@ -78,29 +78,72 @@ func drawPath(path Path, step float64, dc *gg.Context) {
 	dc.Stroke()
 }
 
+func rotDirection(dirValue, rotation int) int {
+	return dirValue + rotation
+}
+
+func getRotationDir(symbol string) int {
+	switch symbol {
+	case "A":
+		return 1
+	case "B":
+		return -1
+	default:
+		return 0
+	}
+}
+
+func checkDiagonalCross(path Path, x1, y1, x2, y2 int) bool {
+	var prev Point[int]
+	for _, p := range path.points {
+		if p.x == x1 && p.y == y2 {
+			if prev.x == x2 && prev.y == y1 {
+				return true
+			}
+		} else if p.x == x2 && p.y == y1 {
+			if prev.x == x1 && prev.y == y2 {
+				return true
+			}
+		}
+		prev = p
+	}
+	return false
+}
+
+func checkAllPathsForCrossing(paths []Path, x1, y1, x2, y2 int) bool {
+	for _, p := range paths {
+		if checkDiagonalCross(p, x1, y1, x2, y2) {
+			return true
+		}
+	}
+	return false
+}
+
+func isMovementDiagonal(x, y int) bool {
+	return math.Abs(math.Abs(float64(x))-math.Abs(float64(y))) < 0.0001
+}
+
 func drawSpawnOnGrid(startX, startY, dir int, grid [][]int, grammar string) []Path {
 	paths := make([]Path, 1)
 	path := Path{points: []Point[int]{{x: startX, y: startY}}}
 	for _, v := range strings.Split(grammar, "") {
-		if v == "A" {
-			dir += 1
-		} else if v == "B" {
-			dir -= 1
-		}
+		rotation := getRotationDir(v)
+		dir = rotDirection(dir, rotation)
 
 		for i := 0; i < len(DIRS); i++ {
 			dir = norm(dir, len(DIRS))
 			offX, offY := getOffset(dir)
 			nextX, nextY := startX+offX, startY+offY
 			if len(grid) <= nextY || nextY < 0 {
-				dir++
+				dir = rotDirection(dir, rotation)
 			} else if len(grid[0]) <= nextX || nextX < 0 {
-				dir++
+				dir = rotDirection(dir, rotation)
 			} else if grid[nextY][nextX] == 1 {
-				dir++
-			} else if math.Abs(math.Abs(float64(offX))-math.Abs(float64(offY))) < 0.0001 &&
-				(grid[startY][startX+offX] == 1 || grid[startY+offY][startX] == 1) {
-				dir++
+				dir = rotDirection(dir, rotation)
+			} else if isMovementDiagonal(offX, offY) && (grid[startY][nextX] == 1 || grid[nextY][startX] == 1) {
+				if checkAllPathsForCrossing(paths, startX, startY, nextX, nextY) {
+					dir = rotDirection(dir, rotation)
+				}
 			} else {
 				grid[nextY][nextX] = 1
 				startX, startY = nextX, nextY
@@ -121,7 +164,7 @@ func drawSpawnOnGrid(startX, startY, dir int, grid [][]int, grammar string) []Pa
 }
 
 func main() {
-	const gridWidth, gridHeight = 30, 20
+	const gridWidth, gridHeight = 90, 60
 	const size = 10
 
 	rules := map[string]string{
