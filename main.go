@@ -9,6 +9,21 @@ import (
 	"github.com/fogleman/gg"
 )
 
+type Pair[T comparable] struct {
+	x, y T
+}
+
+var DIRS []Pair[int] = []Pair[int]{
+	{x: 0, y: 1},
+	{x: 1, y: 1},
+	{x: 1, y: 0},
+	{x: 1, y: -1},
+	{x: 0, y: -1},
+	{x: -1, y: -1},
+	{x: -1, y: 0},
+	{x: -1, y: 1},
+}
+
 func runLSystem(rules map[string]string, seed string, gens uint) string {
 	prevGen := []rune(seed)
 	for i := 0; i < int(gens); i++ {
@@ -29,26 +44,7 @@ func runLSystem(rules map[string]string, seed string, gens uint) string {
 }
 
 func getOffset(dir int) (int, int) {
-	switch dir {
-	case 0:
-		return 0, 1
-	case 1:
-		return 1, 1
-	case 2:
-		return 1, 0
-	case 3:
-		return 1, -1
-	case 4:
-		return 0, -1
-	case 5:
-		return -1, -1
-	case 6:
-		return -1, 0
-	case 7:
-		return -1, 1
-	default:
-		return 0, 1
-	}
+	return DIRS[dir].x, DIRS[dir].y
 }
 
 func norm(val int, bounds int) int {
@@ -67,7 +63,7 @@ func drawSpawnOnGrid(startX, startY, dir int, grid *[216][384]int, grammar strin
 			dir -= 1
 		}
 
-		for i := 0; i < 7; i++ {
+		for i := 0; i < 8; i++ {
 			dir = norm(dir, 8)
 			offX, offY := getOffset(dir)
 			nextX, nextY := startX+offX, startY+offY
@@ -88,7 +84,7 @@ func drawSpawnOnGrid(startX, startY, dir int, grid *[216][384]int, grammar strin
 				grid[nextY][nextX] = 1
 				startX, startY = nextX, nextY
 				if rand.Float32() < 0.1 {
-					defer drawSpawnOnGrid(startX, startY, dir, grid, grammar, dc)
+					drawSpawnOnGrid(startX, startY, dir, grid, grammar, dc)
 				}
 				break
 			}
