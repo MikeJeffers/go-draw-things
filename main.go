@@ -9,11 +9,15 @@ import (
 	"github.com/fogleman/gg"
 )
 
-type Pair[T comparable] struct {
+type Point[T comparable] struct {
 	x, y T
 }
 
-var DIRS []Pair[int] = []Pair[int]{
+type Path struct {
+	points []Point[int]
+}
+
+var DIRS []Point[int] = []Point[int]{
 	{x: 0, y: 1},
 	{x: 1, y: 1},
 	{x: 1, y: 0},
@@ -55,7 +59,28 @@ func norm(val int, bounds int) int {
 	return modVal
 }
 
-func drawSpawnOnGrid(startX, startY, dir int, grid *[216][384]int, grammar string, dc *gg.Context) {
+func scaleAndOffset(x int, magnitude float64) float64 {
+	return magnitude*0.5 + float64(x)*magnitude
+}
+
+func drawPath(path Path, step float64, dc *gg.Context) {
+	dc.SetRGB(1, 1, 1)
+
+	nilPt := Point[int]{x: -1, y: -1}
+	prev := Point[int]{x: -1, y: -1}
+
+	for _, v := range path.points {
+		if prev != nilPt {
+			dc.DrawLine(scaleAndOffset(prev.x, step), scaleAndOffset(prev.y, step), scaleAndOffset(v.x, step), scaleAndOffset(v.y, step))
+		}
+		prev = v
+	}
+	dc.Stroke()
+}
+
+func drawSpawnOnGrid(startX, startY, dir int, grid [][]int, grammar string) []Path {
+	paths := make([]Path, 1)
+	path := Path{points: []Point[int]{{x: startX, y: startY}}}
 	for _, v := range strings.Split(grammar, "") {
 		if v == "A" {
 			dir += 1
@@ -77,23 +102,28 @@ func drawSpawnOnGrid(startX, startY, dir int, grid *[216][384]int, grammar strin
 				(grid[startY][startX+offX] == 1 || grid[startY+offY][startX] == 1) {
 				dir++
 			} else {
-				mag := 10.0
-				dc.SetRGB(1, 1, 1)
-				dc.DrawLine(mag*0.5+float64(startX)*mag, mag*0.5+float64(startY)*mag, mag*0.5+float64(nextX)*mag, mag*0.5+float64(nextY)*mag)
-				dc.Stroke()
 				grid[nextY][nextX] = 1
 				startX, startY = nextX, nextY
+				path.points = append(path.points, Point[int]{x: startX, y: startY})
 				if rand.Float32() < 0.1 {
-					drawSpawnOnGrid(startX, startY, dir, grid, grammar, dc)
+					morePaths := drawSpawnOnGrid(startX, startY, dir, grid, grammar)
+					paths = append(paths, morePaths...)
 				}
 				break
 			}
 		}
 
 	}
+	if len(path.points) > 0 {
+		paths = append(paths, path)
+	}
+	return paths
 }
 
 func main() {
+	const gridWidth, gridHeight = 30, 20
+	const size = 10
+
 	rules := map[string]string{
 		"A": "CBC",
 		"B": "ACC",
@@ -104,15 +134,23 @@ func main() {
 
 	fmt.Println(output)
 
-	var grid [216][384]int
+	var grid = [][]int{}
+	grid = make([][]int, gridHeight)
+	for i := range grid {
+		grid[i] = make([]int, gridWidth)
+	}
 
-	dc := gg.NewContext(3840, 2160)
+	dc := gg.NewContext(gridWidth*size, gridHeight*size)
 	dc.SetRGB(0, 0, 0)
-	dc.DrawRectangle(0, 0, 3840, 2160)
+	dc.DrawRectangle(0, 0, gridWidth*size, gridHeight*size)
 	dc.Fill()
 
-	drawSpawnOnGrid(384/2, 216/2, 3, &grid, output, dc)
+	paths := drawSpawnOnGrid(gridWidth/2, gridHeight/2, 3, grid, output)
+
+	for _, v := range paths {
+		drawPath(v, size, dc)
+	}
 
 	num := int(rand.Float32() * 100)
-	dc.SavePNG(fmt.Sprint(num, "_out.jpg"))
+	dc.SavePNG(fmt.Sprint(num, "_test.jpg"))
 }
