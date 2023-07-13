@@ -149,7 +149,7 @@ func isMovementDiagonal(x, y int) bool {
 	return math.Abs(math.Abs(float64(x))-math.Abs(float64(y))) < 0.0001
 }
 
-func drawSpawnOnGrid(startX, startY, dir int, grid [][]int, grammar string) []Path {
+func computePathsOnGrid(startX, startY, dir int, grid [][]int, grammar string) []Path {
 	paths := make([]Path, 1)
 	path := Path{points: []Point[int]{{x: startX, y: startY}}}
 	for _, v := range strings.Split(grammar, "") {
@@ -174,8 +174,8 @@ func drawSpawnOnGrid(startX, startY, dir int, grid [][]int, grammar string) []Pa
 				grid[nextY][nextX] = 1
 				startX, startY = nextX, nextY
 				path.points = append(path.points, Point[int]{x: startX, y: startY})
-				if rand.Float32() < 0.1 {
-					morePaths := drawSpawnOnGrid(startX, startY, dir, grid, grammar)
+				if rand.Float32() < 0.055 {
+					morePaths := computePathsOnGrid(startX, startY, dir, grid, grammar)
 					paths = append(paths, morePaths...)
 				}
 				break
@@ -190,7 +190,7 @@ func drawSpawnOnGrid(startX, startY, dir int, grid [][]int, grammar string) []Pa
 }
 
 func main() {
-	const gridWidth, gridHeight = 90, 60
+	const gridWidth, gridHeight = 384, 216
 	const size = 10
 
 	rules := map[string]string{
@@ -214,12 +214,12 @@ func main() {
 	dc.DrawRectangle(0, 0, gridWidth*size, gridHeight*size)
 	dc.Fill()
 
-	paths := drawSpawnOnGrid(gridWidth/2, gridHeight/2, 3, grid, output)
+	paths := computePathsOnGrid(gridWidth/2, gridHeight/2, 3, grid, output)
 
 	for _, v := range paths {
 		drawPath(v, size, dc)
 	}
 
 	num := int(rand.Float32() * 100)
-	dc.SavePNG(fmt.Sprint(num, "_test.jpg"))
+	dc.SavePNG(fmt.Sprint(num, "_out.jpg"))
 }
