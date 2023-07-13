@@ -78,6 +78,32 @@ func drawPath(path Path, step float64, dc *gg.Context) {
 	dc.Stroke()
 }
 
+// TODO function for more effecient drawing of lines
+func arePointsLinear(points []Point[int]) bool {
+	if len(points) < 3 {
+		return true // 2 points are always linear
+	}
+	prev := points[0]
+	var dx, dy, prevDx, prevDy int
+	for i, p := range points {
+		if i == 0 {
+			continue
+		} else if i == 1 {
+			dx = p.x - prev.x
+			dy = p.y - prev.y
+			prevDx, prevDy = dx, dy
+		}
+		dx = p.x - prev.x
+		dy = p.y - prev.y
+		if dx != prevDx || dx != prevDy {
+			return false // if delta in x or y changes, non linear
+		}
+		prevDx, prevDy = dx, dy
+		prev = p
+	}
+	return true
+}
+
 func rotDirection(dirValue, rotation int) int {
 	return dirValue + rotation
 }
@@ -140,7 +166,7 @@ func drawSpawnOnGrid(startX, startY, dir int, grid [][]int, grammar string) []Pa
 				dir = rotDirection(dir, rotation)
 			} else if grid[nextY][nextX] == 1 {
 				dir = rotDirection(dir, rotation)
-			} else if isMovementDiagonal(offX, offY) && (grid[startY][nextX] == 1 || grid[nextY][startX] == 1) {
+			} else if isMovementDiagonal(offX, offY) && (grid[startY][nextX] == 1 && grid[nextY][startX] == 1) {
 				if checkAllPathsForCrossing(paths, startX, startY, nextX, nextY) {
 					dir = rotDirection(dir, rotation)
 				}
