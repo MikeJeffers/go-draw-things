@@ -78,7 +78,7 @@ func drawPath(path Path, step float64, dc *gg.Context) {
 	dc.Stroke()
 }
 
-// TODO function for more effecient drawing of lines
+// TODO function for more efficient drawing of lines
 func arePointsLinear(points []Point[int]) bool {
 	if len(points) < 3 {
 		return true // 2 points are always linear
