@@ -65,7 +65,7 @@ func scaleAndOffset(x int, magnitude float64) float64 {
 
 func drawPath(path Path, step float64, dc *gg.Context) {
 	dc.SetRGB(1, 1, 1)
-
+	dc.SetLineWidth(2)
 	nilPt := Point[int]{x: -1, y: -1}
 	prev := Point[int]{x: -1, y: -1}
 
