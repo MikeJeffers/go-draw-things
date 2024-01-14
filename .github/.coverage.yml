@@ -1,0 +1,7 @@
+profile: cover.out
+local-prefix: github.com/MikeJeffers/go-draw-things
+git-token: ${{ github.ref_name == 'master' && secrets.GITHUB_TOKEN || '' }}
+git-branch: badges
+exclude:
+  paths:
+    - ^main.go$ # exclude entry point
