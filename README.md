@@ -1,3 +1,4 @@
+[![Go](https://github.com/MikeJeffers/go-draw-things/actions/workflows/go.yml/badge.svg)](https://github.com/MikeJeffers/go-draw-things/actions/workflows/go.yml)
 ![coverage](https://raw.githubusercontent.com/MikeJeffers/go-draw-things/badges/.badges/main/coverage.svg)
 
 # Drawing self-collidable L-systems
