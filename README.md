@@ -1,5 +1,5 @@
 [![Go](https://github.com/MikeJeffers/go-draw-things/actions/workflows/go.yml/badge.svg)](https://github.com/MikeJeffers/go-draw-things/actions/workflows/go.yml)
-![coverage](https://raw.githubusercontent.com/MikeJeffers/go-draw-things/badges/.badges/main/coverage.svg)
+![coverage](https://raw.githubusercontent.com/MikeJeffers/go-draw-things/badges/.badges/master/coverage.svg)
 
 # Drawing self-collidable L-systems
 What if you could visualize an agent path governed by an L-system that spawns (randomly) other agents that also follow the same L-system grammar but also can not cross a path once traveled?  
