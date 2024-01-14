@@ -32,3 +32,14 @@ func TestNorm(t *testing.T) {
 		}
 	}
 }
+
+func TestScaleAndOffset(t *testing.T) {
+	x := scaleAndOffset(1, 1)
+	if x != 1.5 {
+		t.Errorf("x!=1 %f", x)
+	}
+	x = scaleAndOffset(10, 10)
+	if x != 105 {
+		t.Errorf("x!=105 %f", x)
+	}
+}

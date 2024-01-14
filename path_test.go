@@ -23,3 +23,10 @@ func TestCrossing(t *testing.T) {
 		t.Error()
 	}
 }
+
+func TestInitGrid(t *testing.T) {
+	g := initGrid(10, 10)
+	if len(g) != 10 || len(g[0]) != 10 {
+		t.Errorf("Unexpected matrix dimensions")
+	}
+}
