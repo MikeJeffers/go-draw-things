@@ -33,5 +33,8 @@ func drawToImage(width, height, step int, paths []Path) {
 	}
 
 	num := int(rand.Float32() * 100)
-	dc.SavePNG(fmt.Sprint(num, "_out.jpg"))
+	err := dc.SavePNG(fmt.Sprint(num, "_out.jpg"))
+	if err != nil {
+		fmt.Printf("Output file failed to save: %s", err.Error())
+	}
 }

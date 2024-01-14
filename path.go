@@ -30,8 +30,7 @@ func getOffset(dir int) (int, int) {
 }
 
 func initGrid(gridWidth, gridHeight int) [][]int {
-	var grid = [][]int{}
-	grid = make([][]int, gridHeight)
+	grid := make([][]int, gridHeight)
 	for i := range grid {
 		grid[i] = make([]int, gridWidth)
 	}
@@ -39,30 +38,30 @@ func initGrid(gridWidth, gridHeight int) [][]int {
 }
 
 // TODO function for more efficient drawing of lines
-func arePointsLinear(points []Point[int]) bool {
-	if len(points) < 3 {
-		return true // 2 points are always linear
-	}
-	prev := points[0]
-	var dx, dy, prevDx, prevDy int
-	for i, p := range points {
-		if i == 0 {
-			continue
-		} else if i == 1 {
-			dx = p.x - prev.x
-			dy = p.y - prev.y
-			prevDx, prevDy = dx, dy
-		}
-		dx = p.x - prev.x
-		dy = p.y - prev.y
-		if dx != prevDx || dx != prevDy {
-			return false // if delta in x or y changes, non linear
-		}
-		prevDx, prevDy = dx, dy
-		prev = p
-	}
-	return true
-}
+// func arePointsLinear(points []Point[int]) bool {
+// 	if len(points) < 3 {
+// 		return true // 2 points are always linear
+// 	}
+// 	prev := points[0]
+// 	var dx, dy, prevDx, prevDy int
+// 	for i, p := range points {
+// 		if i == 0 {
+// 			continue
+// 		} else if i == 1 {
+// 			dx = p.x - prev.x
+// 			dy = p.y - prev.y
+// 			prevDx, prevDy = dx, dy
+// 		}
+// 		dx = p.x - prev.x
+// 		dy = p.y - prev.y
+// 		if dx != prevDx || dx != prevDy {
+// 			return false // if delta in x or y changes, non linear
+// 		}
+// 		prevDx, prevDy = dx, dy
+// 		prev = p
+// 	}
+// 	return true
+// }
 
 func rotDirection(dirValue, rotation int) int {
 	return dirValue + rotation
