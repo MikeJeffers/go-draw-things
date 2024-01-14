@@ -22,7 +22,7 @@ func drawPath(path Path, step float64, dc *gg.Context) {
 	dc.Stroke()
 }
 
-func drawToImage(width, height, step int, paths []Path) {
+func drawToImage(width, height, step int, paths []Path, imgName string) {
 	dc := gg.NewContext(width*step, height*step)
 	dc.SetRGB(0, 0, 0)
 	dc.DrawRectangle(0, 0, float64(width*step), float64(height*step))
@@ -32,8 +32,12 @@ func drawToImage(width, height, step int, paths []Path) {
 		drawPath(v, float64(step), dc)
 	}
 
+	saveImg(dc, imgName)
+}
+
+func saveImg(dc *gg.Context, imgName string) {
 	num := int(rand.Float32() * 100)
-	err := dc.SavePNG(fmt.Sprint(num, "_out.jpg"))
+	err := dc.SavePNG(fmt.Sprint(num, "_", imgName, ".jpg"))
 	if err != nil {
 		fmt.Printf("Output file failed to save: %s", err.Error())
 	}

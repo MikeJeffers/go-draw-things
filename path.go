@@ -26,6 +26,7 @@ var DIRS []Point[int] = []Point[int]{
 }
 
 func getOffset(dir int) (int, int) {
+	dir = norm(dir, len(DIRS)) // Normalize dir value to expected len
 	return DIRS[dir].x, DIRS[dir].y
 }
 
@@ -109,7 +110,7 @@ func isMovementDiagonal(x, y int) bool {
 }
 
 func computePathsOnGrid(startX, startY, dir int, grid [][]int, grammar string) []Path {
-	paths := make([]Path, 1)
+	paths := make([]Path, 0)
 	path := Path{points: []Point[int]{{x: startX, y: startY}}}
 	for _, v := range strings.Split(grammar, "") {
 		rotation := getRotationDir(v)

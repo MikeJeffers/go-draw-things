@@ -22,5 +22,5 @@ func main() {
 
 	paths := computePathsOnGrid(gridWidth/2, gridHeight/2, 3, grid, output)
 
-	drawToImage(gridWidth, gridHeight, size, paths)
+	drawToImage(gridWidth, gridHeight, size, paths, "out")
 }
